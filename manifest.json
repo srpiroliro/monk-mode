@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "Monk Mode",
+    "version": "1.0",
+  
+    "description": "Blocks certain websites/pages to avoid procrastination",
+    "icons": {
+
+    },
+  
+    "content_scripts": [
+      {
+        "matches": ["*://*.youtube.com/shorts/*"],
+        "js": ["monk-mode.js"]
+      }
+    ]
+  
+  }
+  
