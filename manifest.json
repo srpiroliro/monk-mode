@@ -5,15 +5,17 @@
   
     "description": "Blocks certain websites/pages to avoid procrastination",
     "icons": {
-
     },
+    "permissions": [
+        "activeTab",
+        "bookmarks",
+        "unlimitedStorage"
+      ],
   
     "content_scripts": [
       {
-        "matches": ["*://*.youtube.com/shorts/*"],
+        "matches": ["*://*.youtube.com/*"],
         "js": ["monk-mode.js"]
       }
     ]
-  
-  }
-  
+}
