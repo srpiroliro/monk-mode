@@ -10,12 +10,17 @@
         "activeTab",
         "bookmarks",
         "unlimitedStorage"
-      ],
+    ],
+
+    "browser_action":{
+      "default_popup": "popup.html"
+    },
   
     "content_scripts": [
       {
-        "matches": ["*://*.youtube.com/*"],
+        "matches": ["http://*/*", "https://*/*"],
         "js": ["monk-mode.js"]
+        
       }
     ]
 }
