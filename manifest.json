@@ -3,13 +3,15 @@
     "name": "Monk Mode",
     "version": "1.0",
   
-    "description": "Blocks certain websites/pages to avoid procrastination",
+    "description": "Blocks certain websites/pages to avoid procrastination and maximize productivity.",
     "icons": {
+
+      "48": "icons/logo-w-48.png",
+      "96": "icons/logo-w-96.png"
     },
+
     "permissions": [
-        "activeTab",
-        "bookmarks",
-        "unlimitedStorage"
+      "activeTab"
     ],
 
     "browser_action":{
