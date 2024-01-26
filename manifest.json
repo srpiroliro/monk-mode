@@ -10,19 +10,21 @@
       "96": "icons/logo-w-96.png"
     },
 
-    "permissions": [
-      "activeTab"
-    ],
+    "permissions": ["storage", "activeTab", "scripting"],
 
     "browser_action":{
       "default_popup": "popup.html"
+    },
+
+    "background": {
+      "service_worker": "background.js"
     },
   
     "content_scripts": [
       {
         "matches": ["http://*/*", "https://*/*"],
-        "js": ["monk-mode.js"]
-        
+        "js": [ "block-page.js","monk-mode.js"],
+        "run_at": "document_idle"
       }
     ]
 }
