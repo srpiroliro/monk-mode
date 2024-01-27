@@ -1,28 +1,79 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const settingsContainer = document.getElementById('sliders');
+  // Fetch saved settings from storage, or use defaults if none are saved
+  chrome.storage.local.get(null, function(savedSettings) {
 
-  // Load settings from storage and then create sliders
-  chrome.storage.local.get(['settings'], function(result) {
-    const savedSettings = result.settings || defaultSettings; // Assume defaultSettings is predefined
+    console.log("savedSettings", savedSettings);
 
-    for (const [part, { block }] of Object.entries(savedSettings.youtube.parts)) {
-      const slider = document.createElement('input');
-      slider.type = 'checkbox';
-      slider.id = part;
-      slider.checked = block;
-
-      const label = document.createElement('label');
-      label.htmlFor = part;
-      label.textContent = part;
-
-      slider.addEventListener('change', function() {
-        savedSettings.youtube.parts[part].block = slider.checked;
-        chrome.storage.local.set({settings: savedSettings});
-        // Send message to content script if needed
-      });
-
-      settingsContainer.appendChild(label);
-      settingsContainer.appendChild(slider);
-    }
+    youtube_view(savedSettings)
   });
 });
+
+function youtube_view(savedSettings) {
+  const container = document.getElementById('settings-container');
+  Object.keys(config.youtube.parts).forEach(part => {
+
+    const storageName =`block${part.charAt(0).toUpperCase() + part.slice(1)}`
+      
+    const defaultPartSetting = config.youtube.parts[part];
+    const savedPartSetting = savedSettings[storageName];
+
+    // Determine whether to use the saved setting or the default
+    const isBlocked = savedPartSetting !== undefined ? savedPartSetting : !defaultPartSetting.block;
+
+    let slider = document.getElementById(`${part}-slider`);
+    if (!slider) 
+      slider = slider_generation(isBlocked, part, container)
+
+    // Add event listener for the slider
+    slider.addEventListener('change', function() {
+      const isNowBlocked = this.checked;
+
+      // Update the settings variable and save the new setting
+      config.youtube.parts[part].block = !isNowBlocked;
+
+      chrome.storage.local.set({ [storageName]: isNowBlocked }, function() {
+
+        console.log("Settings saved!", part, isNowBlocked ? "blocked" : "unblocked");
+
+        try {
+          // Notify content scripts to update the page
+          chrome.tabs.query({}, function(tabs) { // Removed the filter to get all tabs
+            tabs.forEach(tab => {
+              chrome.tabs.sendMessage(tab.id, {action: "updateSettings", part: part, block: isNowBlocked});
+            });
+          });
+        } catch (e) {
+          console.error("Error notifying content scripts:", e);
+        }
+
+      });
+    });
+
+  });
+}
+
+function slider_generation(isBlocked, part, container) {
+
+  // Create slider element
+  const sliderContainer = document.createElement('div');
+  sliderContainer.className = "form-check form-switch";
+
+  const slider = document.createElement('input');
+  slider.className = "form-check-input";
+  slider.type = "checkbox";
+  slider.role = "switch";
+  slider.id = `${part}-slider`;
+  slider.checked = isBlocked;
+
+  const label = document.createElement('label');
+  label.className = "form-check-label";
+  label.htmlFor = `${part}-slider`;
+  label.innerText = part.charAt(0).toUpperCase() + part.slice(1);
+
+  sliderContainer.appendChild(slider);
+  sliderContainer.appendChild(label);
+
+  container.appendChild(sliderContainer);
+
+  return slider;
+}

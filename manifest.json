@@ -1,29 +1,27 @@
 {
-    "manifest_version": 2,
-    "name": "Monk Mode",
+    "manifest_version": 3,
+
     "version": "1.0",
-  
+    "name": "Monk Mode",
     "description": "Blocks certain websites/pages to avoid procrastination and maximize productivity.",
-    "icons": {
+  
 
-      "48": "icons/logo-w-48.png",
-      "96": "icons/logo-w-96.png"
+
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "48": "icons/logo-w-48.png",
+        "96": "icons/logo-w-96.png"
+      }
     },
-
+  
     "permissions": ["storage", "activeTab", "scripting"],
 
-    "browser_action":{
-      "default_popup": "popup.html"
-    },
-
-    "background": {
-      "service_worker": "background.js"
-    },
   
     "content_scripts": [
       {
         "matches": ["http://*/*", "https://*/*"],
-        "js": [ "block-page.js","monk-mode.js"],
+        "js": [ "block-page.js","config.js","monk-mode.js"],
         "run_at": "document_idle"
       }
     ]
