@@ -35,17 +35,17 @@ function youtube_view(savedSettings) {
 
         console.log("Settings saved!", part, isNowBlocked ? "blocked" : "unblocked");
 
-        try {
-          // Notify content scripts to update the page
-          chrome.tabs.query({}, function(tabs) { // Removed the filter to get all tabs
-            tabs.forEach(tab => {
-              chrome.tabs.sendMessage(tab.id, {action: "updateSettings", part: part, block: isNowBlocked});
+        // Notify content scripts to update the page
+        chrome.tabs.query({}, function(tabs) { // Removed the filter to get all tabs
+          tabs.forEach(tab => {
+            chrome.tabs.sendMessage(tab.id, {action: "updateSettings", part: part, block: isNowBlocked}, function(response) {
+              if (chrome.runtime.lastError) {
+                  // Handle the error, e.g., by logging it or by taking corrective action
+                console.error("Error sending message to tab:", tab.title , chrome.runtime.lastError.message);
+              }
             });
           });
-        } catch (e) {
-          console.error("Error notifying content scripts:", e);
-        }
-
+        });
       });
     });
 
@@ -68,7 +68,7 @@ function slider_generation(isBlocked, part, container) {
   const label = document.createElement('label');
   label.className = "form-check-label";
   label.htmlFor = `${part}-slider`;
-  label.innerText = part.charAt(0).toUpperCase() + part.slice(1);
+  label.innerText = part.charAt(0).toUpperCase() + part.slice(1).replace("_", " ");
 
   sliderContainer.appendChild(slider);
   sliderContainer.appendChild(label);

@@ -25,12 +25,24 @@ const config = {
             },
             likes: {
                 block: false,
-                patterns: ["ytd-toggle-button-renderer"]
+                patterns: ["ytd-toggle-button-renderer", "segmented-like-dislike-button-view-model", "ytd-comment-action-buttons-renderer"]
             },
             views: {
                 block: false,
                 patterns: ["ytd-video-primary-info-renderer"]
-            }
+            },
+            subscribers: {
+                block: false,
+                patterns: ["ytd-video-secondary-info-renderer"]
+            },
+            channel: {
+                block: false,
+                patterns: ["ytd-channel-name"]
+            },
+            metadata: {
+                block: false,
+                patterns: ["ytd-video-meta-block"]
+            },
         }
     }
 };

@@ -96,7 +96,9 @@ applySettings();
 
 // Listen for messages from the popup, in case immediate action is required
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action === "updateSettings") 
+    if (request.action === "updateSettings") {
         applySettings(); // Apply settings if a message is received to update settings
+        sendResponse({status: "success"});
+    }
     
 });
