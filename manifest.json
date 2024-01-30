@@ -21,7 +21,7 @@
     "content_scripts": [
       {
         "matches": ["http://*/*", "https://*/*"],
-        "js": [ "block-page.js","config.js","monk-mode.js"],
+        "js": [ "modules/url_block.js","modules/element_block.js","modules/block_page.js","config.js","monk-mode.js"],
         "run_at": "document_idle"
       }
     ]

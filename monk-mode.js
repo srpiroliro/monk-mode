@@ -57,28 +57,7 @@
 //////
 
 
-function updateVisibility(part, shouldBeBlocked) {
-    const elements = document.querySelectorAll(part.patterns.join(","));
-
-    elements.forEach(element => {
-        element.style.display = shouldBeBlocked?'none':'block';
-    });
-}
-
-function applySettings() {
-    chrome.storage.local.get(null, function(settings) {
-        // Check and apply settings for each YouTube part
-
-        updateVisibility(config.youtube.parts.shorts, settings.blockShorts);
-        updateVisibility(config.youtube.parts.comments, settings.blockComments);
-        updateVisibility(config.youtube.parts.recommendations, settings.blockRecommendations);
-        updateVisibility(config.youtube.parts.live_chat, settings.blockLive_chat);
-        updateVisibility(config.youtube.parts.likes, settings.blockLikes);
-        updateVisibility(config.youtube.parts.views, settings.blockViews);
-
-        // Add or modify additional parts as necessary
-    });
-}
+const elementBlocker = ElementBlocker();
 
 // Listen for changes in storage and apply the corresponding setting updates
 chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -86,18 +65,20 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 
         // Check if the change is relevant to your settings and apply them
         if (key.startsWith('block')) {
-            applySettings();
+            elementBlocker.apply();
+            // return ? // Stop checking for other changes
         }
     }
 });
 
 // Apply settings on initial load
-applySettings();
+elementBlocker.apply();
 
 // Listen for messages from the popup, in case immediate action is required
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === "updateSettings") {
-        applySettings(); // Apply settings if a message is received to update settings
+        elementBlocker.apply(); // Apply settings if a message is received to update settings
+
         sendResponse({status: "success"});
     }
     
