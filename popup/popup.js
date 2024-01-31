@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function youtube_view(savedSettings) {
-  const container = document.getElementById('settings-container');
+  const container = document.getElementById('youtube-settings-container');
   Object.keys(config.youtube.parts).forEach(part => {
 
     const storageName =`block${part.charAt(0).toUpperCase() + part.slice(1)}`
@@ -59,7 +59,7 @@ function slider_generation(isBlocked, part, container) {
   sliderContainer.className = "form-check form-switch";
 
   const slider = document.createElement('input');
-  slider.className = "form-check-input";
+  slider.className = "form-check-input danger";
   slider.type = "checkbox";
   slider.role = "switch";
   slider.id = `${part}-slider`;

@@ -11,7 +11,8 @@
       "default_popup": "popup.html",
       "default_icon": {
         "48": "icons/logo-w-48.png",
-        "96": "icons/logo-w-96.png"
+        "96": "icons/logo-w-96.png",
+        "128": "icons/logo-w-128.png"
       }
     },
   
@@ -21,7 +22,7 @@
     "content_scripts": [
       {
         "matches": ["http://*/*", "https://*/*"],
-        "js": [ "modules/url_block.js","modules/element_block.js","modules/block_page.js","config.js","monk-mode.js"],
+        "js": [ "modules/url_block.js","modules/block_page.js","config.js","monk-mode.js"],
         "run_at": "document_idle"
       }
     ]

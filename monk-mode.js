@@ -1,4 +1,4 @@
-// window.addEventListener("yt-navigate-start",youtube); 
+
 
 // function main(){
 //     generate_block_page();
@@ -45,19 +45,56 @@
 //     console.log('The DOM has been fully loaded');
 
 // });
-// window.addEventListener('popstate', function() {
-//     // Handle the navigation event
-//     console.log('Navigated to:', window.location.href);
-    
-//     unblock_page();
-// });
 
-// main();
-
-//////
+window.addEventListener('popstate', function() {
+    console.log('Navigated to:', window.location.href);    
+});
 
 
-const elementBlocker = ElementBlocker();
+
+function youtubeElements(settings) {
+    console.log(settings)
+    youtube_shorts_block = settings.blockShorts;
+
+    updateVisibility(config.youtube.parts.shorts, settings.blockShorts);
+    updateVisibility(config.youtube.parts.comments, settings.blockComments);
+    updateVisibility(config.youtube.parts.recommendations, settings.blockRecommendations);
+    // updateVisibility(config.youtube.parts.live_chat, settings.blockLive_chat);
+    // updateVisibility(config.youtube.parts.likes, settings.blockLikes);
+    // updateVisibility(config.youtube.parts.views, settings.blockViews);
+}
+
+function youtubeHomepage(settings) {
+    if (window.location.href.includes(config.youtube.url)) {
+        console.log("youtube homepage");
+
+        document.querySelector("body").style.overflow="hidden"
+        document.querySelector("#contents.ytd-rich-grid-renderer").style.pointerEvents="none"
+    } else {
+        document.querySelector("body").style.overflow="auto"
+        document.querySelector("#contents.ytd-rich-grid-renderer").style.pointerEvents="initial"
+    }
+
+
+}
+
+let youtube_shorts_block = config.youtube.parts.shorts.block;
+
+function updateVisibility(part, shouldBeBlocked) {
+    const elements = document.querySelectorAll(part.patterns.join(","));
+
+    elements.forEach(element => {
+        // element.style.display = shouldBeBlocked?'none':'block';
+        element.style.opacity = shouldBeBlocked?0:1;
+    });
+}
+
+function applySettings() {
+    chrome.storage.local.get(null, function(settings) {
+        youtubeElements(settings);
+        youtubeHomepage(settings);
+    });
+}
 
 // Listen for changes in storage and apply the corresponding setting updates
 chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -65,21 +102,28 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 
         // Check if the change is relevant to your settings and apply them
         if (key.startsWith('block')) {
-            elementBlocker.apply();
-            // return ? // Stop checking for other changes
+            applySettings();
         }
     }
 });
 
-// Apply settings on initial load
-elementBlocker.apply();
+
 
 // Listen for messages from the popup, in case immediate action is required
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === "updateSettings") {
-        elementBlocker.apply(); // Apply settings if a message is received to update settings
-
+        applySettings(); // Apply settings if a message is received to update settings
         sendResponse({status: "success"});
     }
-    
 });
+
+
+// youtube custom
+window.addEventListener("yt-navigate-start", function(event) {
+    console.log("yt-navigate-start", event);
+
+    applySettings();
+}); 
+
+// Apply settings on initial load
+applySettings();

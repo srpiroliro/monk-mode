@@ -9,3 +9,8 @@ h1.logo {
 form div {
     margin-bottom: 5%;
 }
+
+.form-check.form-switch .form-check-input.danger:checked {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
