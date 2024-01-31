@@ -1,3 +1,5 @@
+const countdown = 30;
+
 const cssStyle = `
 .monkmode--fullscreen-div {
     display: none;
@@ -18,7 +20,10 @@ const cssStyle = `
   }
 
   .monkmode--close-button, .monkmode--confirm-button {
+    text-transform: uppercase;
     font-size: 1em;
+    font-weight: bold;  
+    
     text-decoration: none;
     padding: 10px 20px;
     margin-top: 20px;
@@ -26,7 +31,7 @@ const cssStyle = `
     background-color: transparent;
     color: white;
     border-radius: 5px;
-    border: 1px solid white;
+    border: 4px solid white;
   }
 
   .monkmode--countdown-holder {
@@ -52,8 +57,13 @@ const cssStyle = `
     color: #FFD700;
   }
 
-  .monkmode--link-holder {
+  #monkmode--link-holder {
     display: none;
+  }
+
+  .disabled {
+    opacity: 0.4;
+    pointer-events: none;
   }
 
 
@@ -106,7 +116,7 @@ function generate_block_page() {
     var confirmButton = document.createElement('button');
     confirmButton.textContent = MESSAGES.a_sure;
     confirmButton.disabled = true; // Start as disabled
-    confirmButton.className = 'monkmode--confirm-button';
+    confirmButton.className = 'monkmode--confirm-button disabled';
 
     // Mount everything
     countdownHolder.appendChild(countdownTitle);
@@ -120,14 +130,15 @@ function generate_block_page() {
         countdownHolder.style.display = 'block';
 
         // Start the countdown
-        let countdown = 15;
         countdownElement.textContent = `${countdown}s`;
+        let tmpCountdown = countdown;
         let intervalId = setInterval(() => {
-            countdown--;
-            countdownElement.textContent = `${countdown}s`;
+            tmpCountdown--;
+            countdownElement.textContent = `${tmpCountdown}s`;
 
-            if (countdown <= 0) {
+            if (tmpCountdown <= 0) {
                 clearInterval(intervalId);
+                confirmButton.className='monkmode--confirm-button'; // Remove the disabled class
                 confirmButton.disabled = false; // Enable the button after the countdown
             }
         }, 1000);
@@ -155,10 +166,11 @@ function generate_block_page() {
 }
 
 function block_page(msg="", go_to="") {
+    console.log("blocking page");
 
     // Mute and pause all media
     stop_video();
-    document.addEventListener('load', function() {
+    window.addEventListener('load', function() {
         console.log("loaded");
         stop_video(); // In case the first didn't work because the video wasn't loaded yet
     });
@@ -166,7 +178,7 @@ function block_page(msg="", go_to="") {
     if(msg && document.querySelector('#monkmode--message'))
         document.querySelector('#monkmode--message').textContent = msg;
 
-    if(go_to && document.querySelector('#monkmode--link-holder')){
+    if(go_to!=="" && document.querySelector('#monkmode--link-holder')){
         document.querySelector('#monkmode--link-holder').style.display = 'block';
 
         document.querySelector('#monkmode--link').href = go_to;
