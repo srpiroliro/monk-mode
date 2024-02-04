@@ -22,7 +22,13 @@
     "content_scripts": [
       {
         "matches": ["http://*/*", "https://*/*"],
-        "js": [ "modules/url_block.js","modules/block_page.js","config.js","monk-mode.js"],
+        "js": [ 
+          "modules/url_block.js",
+          "modules/block_page.js",
+          "modules/youtube.js",
+          "config.js",
+          "monk-mode.js"
+        ],
         "run_at": "document_idle"
       }
     ]

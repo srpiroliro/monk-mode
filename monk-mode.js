@@ -44,60 +44,6 @@
 
 
 
-function youtube(settings) {
-    if(!window.location.href.includes(config.youtube.url)) return;
-
-    youtubeElements(settings);
-    youtubeHomepage(settings);
-}
-
-function youtubeHomepage(settings) {
-    if(window.location.pathname=="/" || settings?.blockYoutube) return
-
-    if (settings.blockRecommendations) {
-        console.log("youtube homepage");
-
-        document.querySelector("body").style.overflow="hidden"
-        document.querySelector("#contents.ytd-rich-grid-renderer").style.pointerEvents="none"
-    } else {
-        document.querySelector("body").style.overflow="auto"
-        document.querySelector("#contents.ytd-rich-grid-renderer").style.pointerEvents="initial"
-    }
-
-
-}
-function youtubeElements(settings) {
-    console.log("youtubeElements", settings)
-    youtube_shorts_block = settings.blockShorts;
-
-    const shorts=document.querySelectorAll(config.youtube.parts.shorts.patterns.join(","));
-    const comments=document.querySelectorAll(config.youtube.parts.comments.patterns.join(","));
-    const recommendations=document.querySelectorAll(config.youtube.parts.recommendations.patterns.join(","));
-
-    if (settings.blockShorts) {
-        console.log("blocking",shorts.length,"youtube shorts");
-
-        shorts.forEach(e=>e.style.display="none");
-    }
-
-    if (settings.blockComments) {
-        console.log("blocking",comments.length,"youtube comments");
-
-        comments.forEach(e=>e.style.display="none");
-    }
-
-    if (settings.blockRecommendations) {
-        console.log("blocking",recommendations.length,"youtube recommendations");
-        
-        recommendations.forEach(e=>e.style.display="none");
-    }
-
-
-   
-    // updateVisibility(config.youtube.parts.live_chat, settings.blockLive_chat);
-    // updateVisibility(config.youtube.parts.likes, settings.blockLikes);
-    // updateVisibility(config.youtube.parts.views, settings.blockViews);
-}
 
 function updateVisibility(part, shouldBeBlocked) {
     const elements = document.querySelectorAll(part.patterns.join(","));
@@ -115,10 +61,7 @@ let youtube_shorts_block = config.youtube.parts.shorts.block;
 
 
 function applySettings() {
-    
     chrome.storage.local.get(null, function(settings) {
-        console.log("loaded settings", settings);
-
         youtube(settings);
         urlDetect(settings);
     });
@@ -169,7 +112,7 @@ window.addEventListener("yt-navigate-start", function(event) {
 }); 
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOMContentLoaded");
+    console.log("DOMContentLoaded detected!");
 
     applySettings();    
 });
@@ -177,11 +120,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // Apply settings on initial load
 
 window.addEventListener('load', function() {
-   console.log('All assets are loaded') 
+   console.log('load event detected!');
 
+   console.log("applying settings...", document.querySelector("ytd-watch-next-secondary-results-renderer"))
+
+   applySettings();
 })
 
-applySettings();
 
 
 generate_block_page();
